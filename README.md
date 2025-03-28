@@ -4,7 +4,7 @@ A modern, responsive portfolio website built with React, TypeScript, and Tailwin
 
 ## 🚀 Live Demo
 
-[View Live Demo](https://your-portfolio-url.netlify.app)
+[View Live Demo](madhusudanvbportfolio.netlify.app)
 
 ## ✨ Features
 
