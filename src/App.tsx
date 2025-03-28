@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Github, Linkedin, Mail, ExternalLink, Briefcase, FolderGit2, User, Phone, Camera, Calendar, ShoppingBag, Sun, Moon } from 'lucide-react';
+import { Github, Linkedin, Mail, ExternalLink, Briefcase, FolderGit2, User, Phone, Camera, Calendar, ShoppingBag, Sun, Moon, Menu, X } from 'lucide-react';
 
 const personalInfo = {
   name: "Madhusudan VB",
-  title: "DevOps Engineer | Cloud Enthusiast | Automation Geek | CI/CD Pipeline Specialist | Support Engineer",
+    title: "DevOps Engineer | Cloud Enthusiast | Automation Geek | CI/CD Pipeline Specialist | Support Engineer",
   about: "I'm a learning DevOps engineer passionate about automation, cloud computing, and CI/CD pipelines. I have hands-on experience with various DevOps tools and platforms and continuously strive to enhance my skills. 🚀 Aspiring DevOps Engineer | Cloud Enthusiast | Automation Geek",
   email: "madhusudanvb25@gmail.com",
   phone: "8553440951",
@@ -52,11 +52,12 @@ const projects = [
   },
 ];
 
-function NavLink({ href, children, isDark }: { href: string; children: React.ReactNode; isDark: boolean }) {
+function NavLink({ href, children, isDark, onClick }: { href: string; children: React.ReactNode; isDark: boolean; onClick?: () => void }) {
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     const element = document.querySelector(href);
     element?.scrollIntoView({ behavior: 'smooth' });
+    if (onClick) onClick();
   };
 
   return (
@@ -78,6 +79,7 @@ function NavLink({ href, children, isDark }: { href: string; children: React.Rea
 
 function Navigation({ isDark, toggleTheme }: { isDark: boolean; toggleTheme: () => void }) {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -87,6 +89,8 @@ function Navigation({ isDark, toggleTheme }: { isDark: boolean; toggleTheme: () 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const closeMenu = () => setIsMenuOpen(false);
 
   return (
     <motion.nav
@@ -103,17 +107,48 @@ function Navigation({ isDark, toggleTheme }: { isDark: boolean; toggleTheme: () 
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="flex-1" /> {/* Spacer */}
-        <div className="flex items-center gap-4">
-          <NavLink href="#about" isDark={isDark}>About</NavLink>
-          <NavLink href="#experience" isDark={isDark}>Experience</NavLink>
-          <NavLink href="#projects" isDark={isDark}>Projects</NavLink>
-          <NavLink href="#contact" isDark={isDark}>Contact</NavLink>
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex justify-between items-center">
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden p-2 rounded-lg focus:outline-none"
+          >
+            {isMenuOpen ? (
+              <X className={isDark ? "text-white" : "text-gray-800"} />
+            ) : (
+              <Menu className={isDark ? "text-white" : "text-gray-800"} />
+            )}
+          </button>
+
+          {/* Desktop navigation */}
+          <div className="hidden md:flex flex-1 justify-center items-center gap-4">
+            <NavLink href="#about" isDark={isDark}>About</NavLink>
+            <NavLink href="#experience" isDark={isDark}>Experience</NavLink>
+            <NavLink href="#projects" isDark={isDark}>Projects</NavLink>
+            <NavLink href="#contact" isDark={isDark}>Contact</NavLink>
+          </div>
+
+          {/* Theme toggle - always visible */}
+          <div className="flex items-center">
+            <ThemeToggle isDark={isDark} toggleTheme={toggleTheme} />
+          </div>
         </div>
-        <div className="flex-1 flex justify-end">
-          <ThemeToggle isDark={isDark} toggleTheme={toggleTheme} />
-        </div>
+
+        {/* Mobile menu */}
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="md:hidden mt-4 py-4 flex flex-col gap-2"
+          >
+            <NavLink href="#about" isDark={isDark} onClick={closeMenu}>About</NavLink>
+            <NavLink href="#experience" isDark={isDark} onClick={closeMenu}>Experience</NavLink>
+            <NavLink href="#projects" isDark={isDark} onClick={closeMenu}>Projects</NavLink>
+            <NavLink href="#contact" isDark={isDark} onClick={closeMenu}>Contact</NavLink>
+          </motion.div>
+        )}
       </div>
     </motion.nav>
   );
